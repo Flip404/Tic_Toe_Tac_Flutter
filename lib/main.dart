@@ -35,84 +35,99 @@ class _MainState extends State<Main> {
   Widget build(BuildContext context) {
     final features = Provider.of<TicTacToeProvider>(context);
 
+    final double width = (MediaQuery.of(context).size.height >=
+            MediaQuery.of(context).size.width)
+        ? MediaQuery.of(context).size.width
+        : 500;
+    final double height = (MediaQuery.of(context).size.height >=
+            MediaQuery.of(context).size.width)
+        ? MediaQuery.of(context).size.width
+        : 500;
+
     return Scaffold(
         backgroundColor: const Color(0xff292d32),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "Tic Tac Toe",
-              style: TextStyle(
-                color: features.value == "X"
-                    ? const Color(0XFF48B5D5)
-                    : const Color(0XFFF73668),
-                fontSize: 60,
-              ),
-            ),
-            const SizedBox(
-              height: 25.0,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.all(10),
-              child: GridView.count(
-                crossAxisCount: 9 ~/ 3,
-                children: List.generate(9, (index) {
-                  return InkWell(
-                    onTap: features.gameOver
-                        ? () => features.restartGame()
-                        : () {
-                            if (features.board![index] == "") {
-                              // print(features.board);
-                              // print("worked");
-                              features.board![index] = features.value;
-                              // print("count turn");
-                              // print(features.turn);
-                              features.turn++;
-                              // print(features.turn);
-                              features.winnerCheck(index);
-                              // print("checkWinner");
-                              features.checkWinner();
-                              // print("checkLastValue");
-                              features.checkLastValue();
-                              // print(features.board![index]);
-                            }
-                          },
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: boxdecoration(index),
-                      child: Center(
-                        child: Text(
-                          features.board![index],
-                          style: TextStyle(
-                            color: features.board![index] == "X"
-                                ? const Color(0XFF48B5D5)
-                                : const Color(0XFFF73668),
-                            fontSize: 64,
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Tic Tac Toe",
+                  style: TextStyle(
+                    color: features.value == "X"
+                        ? const Color(0XFF48B5D5)
+                        : const Color(0XFFF73668),
+                    fontSize: 60,
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                SizedBox(
+                  width: width,
+                  height: height,
+                  child: GridView.count(
+                    shrinkWrap: true,
+                    childAspectRatio: (width / 3) / (height / 3),
+                    crossAxisCount: 9 ~/ 3,
+                    children: List.generate(9, (index) {
+                      return Container(
+                        width: width / 3,
+                        height: height / 6,
+                        decoration: boxdecoration(index),
+                        child: InkWell(
+                          onTap: features.gameOver
+                              ? () => features.restartGame()
+                              : () {
+                                  debugPrint("width : $width");
+                                  debugPrint("height : $height");
+                                  debugPrint("container width : ${width / 3}");
+                                  debugPrint(
+                                      "container height : ${height / 3}");
+                                  if (features.board![index] == "") {
+                                    // print(features.board);
+                                    // print("worked");
+                                    features.board![index] = features.value;
+                                    // print("count turn");
+                                    // print(features.turn);
+                                    features.turn++;
+                                    // print(features.turn);
+                                    features.winnerCheck(index);
+                                    // print("checkWinner");
+                                    features.checkWinner();
+                                    // print("checkLastValue");
+                                    features.checkLastValue();
+                                    // print(features.board![index]);
+                                  }
+                                },
+                          child: Center(
+                            child: Text(
+                              features.board![index],
+                              style: TextStyle(
+                                color: features.board![index] == "X"
+                                    ? const Color(0XFF48B5D5)
+                                    : const Color(0XFFF73668),
+                                fontSize: 64,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                }),
-              ),
+                      );
+                    }),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Text(
+                  features.result == ""
+                      ? "It's ${features.value} turn".toUpperCase()
+                      : features.result,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 50,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(
-              height: 25.0,
-            ),
-            Text(
-              features.result == ""
-                  ? "It's ${features.value} turn".toUpperCase()
-                  : features.result,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 50,
-              ),
-            ),
-          ],
+          ),
         ));
   }
 
